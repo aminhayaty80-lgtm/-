@@ -1,0 +1,7 @@
+{
+  "name": "سیستم مدیریت بیمه",
+  "description": "سیستم مدیریت مشتریان، اقساط، سوابق مالی و الصاق اسناد بیمه",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

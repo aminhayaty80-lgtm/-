@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سیستم مدیریت مشتریان بیمه</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --secondary: #0f766e;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --success-light: #ecfdf5;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', Tahoma, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0369a1 100%);
+      color: white;
+      padding: 16px 24px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title p {
+      font-size: 0.78rem;
+      opacity: 0.85;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Shortcuts Notice Bar */
+    .shortcuts-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .shortcuts-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .shortcuts-list {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .shortcut-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .key {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 1px 0 #94a3b8;
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #1e293b;
+      font-family: monospace;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 24px 60px;
+      flex: 1;
+    }
+
+    /* Stats Overview */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-info h3 {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .stat-info .stat-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .stat-icon.blue { background: #dbeafe; color: #1d4ed8; }
+    .stat-icon.amber { background: #fef3c7; color: #b45309; }
+    .stat-icon.emerald { background: #d1fae5; color: #047857; }
+    .stat-icon.rose { background: #ffe4e6; color: #be123c; }
+
+    /* Controls Bar */
+    .controls-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 40px 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.92rem;
+      background: #f8fafc;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      background: #ffffff;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 14px;
+      color: var(--text-muted);
+      font-size: 17px;
+      pointer-events: none;
+    }
+
+    .filter-select {
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #f8fafc;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select:focus {
+      border-color: var(--border-focus);
+      background: #ffffff;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .btn-danger-outline {
+      background: transparent;
+      border: 1px solid #fecaca;
+      color: var(--danger);
+    }
+    .btn-danger-outline:hover {
+      background: var(--danger-light);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      gap: 6px;
+    }
+
+    /* Table Container */
+    .table-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s ease;
+      cursor: pointer;
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    tbody tr.selected-row {
+      background: #eff6ff !important;
+      outline: 2px solid #3b82f6;
+      outline-offset: -2px;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      vertical-align: middle;
+      color: var(--text-main);
+    }
+
+    .client-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .client-name {
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 0.94rem;
+    }
+    .client-meta {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-primary { background: #dbeafe; color: #1e40af; }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Modal Overlay */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 840px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      animation: modalSlide 0.25s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from { transform: translateY(16px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      z-index: 10;
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 24px;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      background: #f8fafc;
+      border-radius: 0 0 16px 16px;
+    }
+
+    /* Grid Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.span-2 {
+      grid-column: span 2;
+    }
+
+    .form-group.span-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: #f8fafc;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--border-focus);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .info-card-label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .info-card-val {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Attachments Section */
+    .attachments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .attachment-card {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .attachment-card:hover {
+      border-color: var(--border-focus);
+      background: #f0f7ff;
+    }
+
+    .attachment-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .attachment-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .attachment-card:hover .attachment-overlay {
+      opacity: 1;
+    }
+
+    .attachment-badge-label {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.75);
+      color: white;
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+
+    /* Installment Table & Tracker */
+    .installments-table th, .installments-table td {
+      padding: 10px 12px;
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: #10b981;
+      cursor: pointer;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      transition: width 0.3s ease;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 20px;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-modal img {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: 8px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 32px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      font-size: 0.88rem;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls-card {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .form-group.span-2 {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-title">
+          <h1>سیستم مدیریت مشتریان بیمه</h1>
+          <p>سامانه جامع صدور، بایگانی اسناد، صورت‌حساب مالی و اقساط</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);" onclick="resetDemoData()">
+          🔄 بازنشانی اطلاعات نمونه
+        </button>
+        <button class="btn btn-primary" style="background: #2563eb; border: 1px solid rgba(255,255,255,0.2);" onclick="openNewCustomerModal()">
+          ➕ ثبت بیمه‌گذار جدید
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Shortcuts Bar -->
+  <div class="shortcuts-bar">
+    <div class="shortcuts-container">
+      <div class="shortcuts-list">
+        <span style="font-weight: 700; color: var(--text-main);">⚡ کلیدهای فوری (روی سطر انتخابی):</span>
+        <span class="shortcut-badge"><span class="key">2</span> مشاهده پرونده کامل</span>
+        <span class="shortcut-badge"><span class="key">6</span> صورت‌حساب مالی و الصاق مدارک (۴ عکس)</span>
+        <span class="shortcut-badge"><span class="key">7</span> مدیریت اقساط و تسویه</span>
+        <span class="shortcut-badge"><span class="key">↑ / ↓</span> جابجایی بین ردیف‌ها</span>
+        <span class="shortcut-badge"><span class="key">Esc</span> بستن پنجره‌ها</span>
+      </div>
+      <div id="activeRowIndicator" style="font-size: 0.8rem; font-weight: 600; color: var(--primary);">
+        سطر انتخابی: ۱
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>کل بیمه‌گذاران فعال</h3>
+          <div class="stat-value" id="statTotalClients">۰</div>
+        </div>
+        <div class="stat-icon blue">📋</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>نزدیک به تمدید (۳۰ روز)</h3>
+          <div class="stat-value" id="statExpiringSoon">۰</div>
+        </div>
+        <div class="stat-icon amber">⏳</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>کل حق‌بیمه صادرشده</h3>
+          <div class="stat-value" id="statTotalDebtor">۰</div>
+        </div>
+        <div class="stat-icon emerald">💳</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h3>مانده مطالبات / اقساط باز</h3>
+          <div class="stat-value" id="statTotalRemaining">۰</div>
+        </div>
+        <div class="stat-icon rose">⚠️</div>
+      </div>
+    </div>
+
+    <!-- Search and Controls -->
+    <div class="controls-card">
+      <div class="search-group">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="جستجو سریع بر اساس نام، کد ملی، شماره بیمه‌نامه یا نوع بیمه..." oninput="handleSearch()">
+      </div>
+
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <select id="filterType" class="filter-select" onchange="handleSearch()">
+          <option value="">همه رشته‌های بیمه‌ای</option>
+          <option value="شخص ثالث">شخص ثالث</option>
+          <option value="بدنه خودرو">بدنه خودرو</option>
+          <option value="درمان تکمیلی">درمان تکمیلی</option>
+          <option value="عمر و سرمایه‌گذاری">عمر و سرمایه‌گذاری</option>
+          <option value="آتش‌سوزی و مسئولیت">آتش‌سوزی و مسئولیت</option>
+        </select>
+
+        <select id="filterCompany" class="filter-select" onchange="handleSearch()">
+          <option value="">همه شرکت‌های بیمه</option>
+          <option value="بیمه ایران">بیمه ایران</option>
+          <option value="بیمه آسیا">بیمه آسیا</option>
+          <option value="بیمه سامان">بیمه سامان</option>
+          <option value="بیمه پاسارگاد">بیمه پاسارگاد</option>
+          <option value="بیمه دانا">بیمه دانا</option>
+          <option value="بیمه البرز">بیمه البرز</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Main Table -->
+    <div class="table-wrapper">
+      <div class="table-responsive">
+        <table id="customersTable">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">#</th>
+              <th>نام و نام خانوادگی</th>
+              <th>نوع بیمه</th>
+              <th>مورد بیمه</th>
+              <th>شرکت صادرکننده</th>
+              <th>تاریخ شروع و پایان</th>
+              <th>وضعیت تمدید</th>
+              <th>خلاصه اقساط و مانده</th>
+              <th style="text-align: center;">عملیات و کلیدهای فوری</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Dynamic rows rendered via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== MODAL 2: CUSTOMER DETAILS (Trigger: Key 2) ==================== -->
+  <div id="modalDetails" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="key">2</span>
+          <h2 class="modal-title">مشخصات کامل پرونده بیمه‌گذار</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal('modalDetails')">✕</button>
+      </div>
+      <div class="modal-body" id="modalDetailsBody">
+        <!-- Injected via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalDetails')">بستن (Esc)</button>
+        <button class="btn btn-primary" onclick="switchModal('modalDetails', 'modalAccounting')">رفتن به امور مالی [6]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 6: ACCOUNTING & ATTACHMENTS (Trigger: Key 6) ==================== -->
+  <div id="modalAccounting" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="key">6</span>
+          <h2 class="modal-title">صورت‌حساب مالی و الصاق مدارک مشتری</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal('modalAccounting')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Customer Info Summary -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h3 id="accClientName" style="font-size: 1.05rem; font-weight: 800; color: var(--text-main);">نام مشتری</h3>
+            <p id="accPolicyNumber" style="font-size: 0.82rem; color: var(--text-muted);">شماره بیمه‌نامه: -</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <span id="accBalanceStatusBadge" class="badge badge-warning">مانده بدهی</span>
+          </div>
+        </div>
+
+        <!-- Financial Statement Summary Cards -->
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+          <div class="stat-card" style="padding: 12px 16px;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">کل بدهکار (حق‌بیمه)</div>
+              <div id="accDebtorAmount" style="font-size: 1.15rem; font-weight: 800; color: #1e3a8a;">۰ تومان</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 12px 16px;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">کل بستانکار (دریافتی)</div>
+              <div id="accCreditorAmount" style="font-size: 1.15rem; font-weight: 800; color: #047857;">۰ تومان</div>
+            </div>
+          </div>
+          <div class="stat-card" style="padding: 12px 16px;">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">مانده حساب</div>
+              <div id="accBalanceAmount" style="font-size: 1.15rem; font-weight: 800; color: #b91c1c;">۰ تومان</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Payment Voucher Form -->
+        <div style="background: #f1f5f9; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+          <h4 style="font-size: 0.92rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>➕</span> ثبت سند واریز / سند پرداخت جدید
+          </h4>
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 1.2fr auto; align-items: flex-end;">
+            <div class="form-group">
+              <label class="form-label">مبلغ پرداختی (تومان)</label>
+              <input type="number" id="voucherAmount" class="form-control" placeholder="مثلاً ۵۰۰,۰۰۰">
+            </div>
+            <div class="form-group">
+              <label class="form-label">تاریخ واریز</label>
+              <input type="text" id="voucherDate" class="form-control" placeholder="۱۴۰۳/۰۷/۱۵">
+            </div>
+            <div class="form-group">
+              <label class="form-label">روش پرداخت</label>
+              <select id="voucherMethod" class="form-control">
+                <option value="کارت به کارت / پوز">کارت به کارت / پوز</option>
+                <option value="چک بانکی صیادی">چک بانکی صیادی</option>
+                <option value="واریز به حساب شرکت">واریز به حساب شرکت</option>
+                <option value="نقدی">نقدی</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">شماره پیگیری / شرح</label>
+              <input type="text" id="voucherDesc" class="form-control" placeholder="شماره پیگیری یا بابت قسط">
+            </div>
+            <div class="form-group">
+              <button class="btn btn-success" onclick="addPaymentVoucher()">ثبت سند</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vouchers Table -->
+        <h4 style="font-size: 0.92rem; font-weight: 700; margin-bottom: 10px;">📋 سوابق اسناد و تراکنش‌های مالی ثبت شده</h4>
+        <div style="border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px;">
+          <table style="font-size: 0.82rem;">
+            <thead>
+              <tr style="background: #f8fafc;">
+                <th>#</th>
+                <th>تاریخ سند</th>
+                <th>مبلغ (تومان)</th>
+                <th>روش پرداخت</th>
+                <th>شماره پیگیری / شرح</th>
+                <th style="width: 60px; text-align: center;">عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="vouchersTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 4 Attachments Upload/View Section -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <h4 style="font-size: 0.92rem; font-weight: 700;">📁 الصاق مدارک و اسناد هویتی (حداکثر ۴ عکس مدرک)</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">کلیک روی هر کادر جهت بارگذاری یا مشاهده</span>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">مدارک به طور خودکار در حافظه داخلی سیستم (LocalStorage) ذخیره شده و بدون نیاز به اینترنت در دسترس هستند.</p>
+
+          <div class="attachments-grid" id="attachmentsGrid">
+            <!-- 4 slots generated by JS -->
+          </div>
+          <input type="file" id="attachmentFileInput" accept="image/*" style="display: none;" onchange="handleFileSelected(event)">
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalAccounting')">بستن (Esc)</button>
+        <button class="btn btn-primary" onclick="switchModal('modalAccounting', 'modalInstallments')">مشاهده جدول اقساط [7]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 7: INSTALLMENTS TRACKER (Trigger: Key 7) ==================== -->
+  <div id="modalInstallments" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 860px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="key">7</span>
+          <h2 class="modal-title">مدیریت اقساط و رهگیری پرداخت‌ها</h2>
+        </div>
+        <button class="modal-close" onclick="closeModal('modalInstallments')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Client and Progress Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+          <div>
+            <h3 id="instClientName" style="font-size: 1.05rem; font-weight: 800; color: var(--text-main);">نام مشتری</h3>
+            <p id="instPolicyNumber" style="font-size: 0.82rem; color: var(--text-muted);">شماره بیمه‌نامه: -</p>
+          </div>
+          <div style="text-align: left;">
+            <div id="instProgressSummary" style="font-size: 0.88rem; font-weight: 700; color: var(--success);">۳ از ۷ قسط پرداخت شده</div>
+            <div id="instRemainingText" style="font-size: 0.78rem; color: var(--text-muted);">مانده: ۰ تومان</div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar-container">
+          <div id="instProgressBar" class="progress-bar-fill" style="width: 42%;"></div>
+        </div>
+
+        <!-- Flexible Plan Generator -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);">⚙️ تغییر یا تولید مجدد طرح اقساط:</span>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button class="btn btn-outline btn-sm" onclick="generateInstallmentPlan(3)">۳ قسط</button>
+              <button class="btn btn-outline btn-sm" onclick="generateInstallmentPlan(5)">۵ قسط</button>
+              <button class="btn btn-outline btn-sm" onclick="generateInstallmentPlan(6)">۶ قسط</button>
+              <button class="btn btn-outline btn-sm" onclick="generateInstallmentPlan(7)">۷ قسط</button>
+              <button class="btn btn-outline btn-sm" onclick="generateInstallmentPlan(11)">۱۱ قسط</button>
+              <button class="btn btn-primary btn-sm" onclick="promptCustomInstallmentPlan()">اقساط سفارشی...</button>
+            </div>
+          </div>
+          <p style="font-size: 0.76rem; color: var(--text-muted);">با انتخاب هر طرح، مبلغ کل حق‌بیمه به طور خودکار به تعداد اقساط تعیین شده سرشکن خواهد شد.</p>
+        </div>
+
+        <!-- Interactive Checklist Table -->
+        <div style="border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+          <table class="installments-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th style="width: 50px; text-align: center;">تسویه</th>
+                <th>ردیف قسط</th>
+                <th>تاریخ سررسید</th>
+                <th>مبلغ قسط (تومان)</th>
+                <th>وضعیت قسط</th>
+                <th>تاریخ و توضیحات پرداخت</th>
+              </tr>
+            </thead>
+            <tbody id="installmentsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalInstallments')">بستن (Esc)</button>
+        <button class="btn btn-success" onclick="saveInstallmentsAndClose()">تایید و ذخیره تغییرات</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ADD / EDIT CUSTOMER ==================== -->
+  <div id="modalCustomerForm" class="modal-backdrop">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2 id="customerFormTitle" class="modal-title">ثبت پرونده بیمه‌گذار جدید</h2>
+        <button class="modal-close" onclick="closeModal('modalCustomerForm')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="customerForm" onsubmit="handleCustomerFormSubmit(event)" class="form-grid">
+          <input type="hidden" id="custFormId">
+
+          <div class="form-group">
+            <label class="form-label">نام و نام خانوادگی *</label>
+            <input type="text" id="custFullName" class="form-control" required placeholder="مثال: علی رضایی">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">کد ملی *</label>
+            <input type="text" id="custNationalId" class="form-control" required placeholder="۱۰ رقمی">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">تاریخ تولد</label>
+            <input type="text" id="custBirthDate" class="form-control" placeholder="۱۳۶۵/۰۴/۱۸">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">شماره همراه (موبایل) *</label>
+            <input type="tel" id="custPhone" class="form-control" required placeholder="۰۹۱۲۳۴۵۶۷۸۹">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">تلفن ثابت</label>
+            <input type="tel" id="custLandline" class="form-control" placeholder="۰۲۱۸۸۰۰۰۰۰۰">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">شغل / حرفه</label>
+            <input type="text" id="custOccupation" class="form-control" placeholder="کارمند، آزاد، پزشک...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">نوع بیمه *</label>
+            <select id="custInsuranceType" class="form-control" required>
+              <option value="شخص ثالث">شخص ثالث خودرو</option>
+              <option value="بدنه خودرو">بدنه خودرو</option>
+              <option value="درمان تکمیلی">درمان تکمیلی انفرادی/گروهی</option>
+              <option value="عمر و سرمایه‌گذاری">عمر و پس‌انداز / بازنشستگی</option>
+              <option value="آتش‌سوزی و مسئولیت">آتش‌سوزی و مسئولیت مدنی</option>
+              <option value="باربری و مهندسی">باربری و مهندسی</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">شرکت صادرکننده بیمه *</label>
+            <select id="custCompany" class="form-control" required>
+              <option value="بیمه ایران">بیمه ایران</option>
+              <option value="بیمه آسیا">بیمه آسیا</option>
+              <option value="بیمه سامان">بیمه سامان</option>
+              <option value="بیمه پاسارگاد">بیمه پاسارگاد</option>
+              <option value="بیمه دانا">بیمه دانا</option>
+              <option value="بیمه البرز">بیمه البرز</option>
+              <option value="بیمه کوثر">بیمه کوثر</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">مورد بیمه *</label>
+            <input type="text" id="custSubject" class="form-control" required placeholder="پژو ۲۰۶، آپارتمان مسکونی...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">شماره بیمه‌نامه *</label>
+            <input type="text" id="custPolicyNumber" class="form-control" required placeholder="۱۴۰۳/۲۲۰/۰۱/۰۰۱">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">کد بیمه‌گذار / نمایندگی</label>
+            <input type="text" id="custInsurerCode" class="form-control" placeholder="کد اختصاصی ۵۴۸۱">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">حق‌بیمه کل (تومان) *</label>
+            <input type="number" id="custTotalAmount" class="form-control" required placeholder="مثال: ۸۵۰۰۰۰۰">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">تاریخ شروع بیمه‌نامه *</label>
+            <input type="text" id="custStartDate" class="form-control" required placeholder="۱۴۰۳/۰۱/۱۵">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">تاریخ پایان بیمه‌نامه *</label>
+            <input type="text" id="custEndDate" class="form-control" required placeholder="۱۴۰۴/۰۱/۱۵">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">تعداد اقساط اولیه</label>
+            <select id="custInstallmentsCount" class="form-control">
+              <option value="1">یکجا (نقدی)</option>
+              <option value="3">۳ قسط</option>
+              <option value="5">۵ قسط</option>
+              <option value="6">۶ قسط</option>
+              <option value="7" selected>۷ قسط</option>
+              <option value="11">۱۱ قسط</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">کد پستی</label>
+            <input type="text" id="custPostalCode" class="form-control" placeholder="۱۰ رقمی">
+          </div>
+
+          <div class="form-group span-full">
+            <label class="form-label">آدرس کامل</label>
+            <input type="text" id="custAddress" class="form-control" placeholder="استان، شهر، خیابان، پلاک، واحد">
+          </div>
+
+          <div class="form-group span-full">
+            <label class="form-label">توضیحات و ملاحظات قرارداد</label>
+            <textarea id="custNotes" class="form-control" rows="2" placeholder="تخفیف عدم خسارت، نام معرف، یادداشت‌های تکمیلی..."></textarea>
+          </div>
+
+          <div class="form-group span-full" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+            <button type="button" class="btn btn-outline" onclick="closeModal('modalCustomerForm')">انصراف</button>
+            <button type="submit" class="btn btn-primary">ذخیره اطلاعات بیمه‌گذار</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== LIGHTBOX MODAL ==================== -->
+  <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
+    <button class="lightbox-close">✕</button>
+    <img id="lightboxImg" src="" alt="پیش‌نمایش مدرک" onclick="event.stopPropagation()">
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastIcon">ℹ️</span>
+    <span id="toastMsg">عملیات با موفقیت انجام شد</span>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       SAMPLE DEMO DATA INITIALIZATION
+       ========================================================================== */
+    const STORAGE_KEY = 'insurance_management_records_v1';
+
+    const INITIAL_DEMO_DATA = [
+      {
+        id: 'cust_1',
+        fullName: 'امیرحسین رضایی',
+        nationalId: '0078945612',
+        birthDate: '1364/05/20',
+        phone: '09123456789',
+        landline: '02188456123',
+        occupation: 'مهندس عمران',
+        postalCode: '1987654321',
+        address: 'تهران، سعادت‌آباد، میدان کاج، خیابان سرو غربی، پلاک ۲۲، واحد ۴',
+        insuranceType: 'شخص ثالث',
+        company: 'بیمه ایران',
+        subject: 'پژو ۲۰۶ تیپ ۵ - مدل ۱۳۹۸',
+        policyNumber: '1403/101/00845',
+        insurerCode: '48201',
+        startDate: '1403/07/01',
+        endDate: '1404/07/01',
+        totalAmount: 10500000,
+        notes: 'تخفیف ۷۰ درصد عدم خسارت. پرداخت اقساطی به صورت ۷ قسط.',
+        attachments: [
+          { slot: 1, title: 'کارت ملی', dataUrl: '' },
+          { slot: 2, title: 'کارت خودرو', dataUrl: '' },
+          { slot: 3, title: 'بیمه‌نامه سال قبل', dataUrl: '' },
+          { slot: 4, title: 'فیش پرداخت', dataUrl: '' }
+        ],
+        vouchers: [
+          { id: 'v_1', date: '1403/07/01', amount: 1500000, method: 'کارت به کارت / پوز', desc: 'پیش‌پرداخت اولیه نقدی' },
+          { id: 'v_2', date: '1403/08/01', amount: 1500000, method: 'واریز به حساب شرکت', desc: 'قسط اول' },
+          { id: 'v_3', date: '1403/09/01', amount: 1500000, method: 'کارت به کارت / پوز', desc: 'قسط دوم' }
+        ],
+        installments: [
+          { num: 1, dueDate: '1403/07/01', amount: 1500000, isPaid: true, paidDate: '1403/07/01', note: 'پیش‌پرداخت نقدی' },
+          { num: 2, dueDate: '1403/08/01', amount: 1500000, isPaid: true, paidDate: '1403/08/01', note: 'واریز اینترنتی' },
+          { num: 3, dueDate: '1403/09/01', amount: 1500000, isPaid: true, paidDate: '1403/09/01', note: 'دستگاه پوز دفتر' },
+          { num: 4, dueDate: '1403/10/01', amount: 1500000, isPaid: false, paidDate: '', note: 'چک صیادی شماره ۱۲۸۸' },
+          { num: 5, dueDate: '1403/11/01', amount: 1500000, isPaid: false, paidDate: '', note: 'چک صیادی شماره ۱۲۸۹' },
+          { num: 6, dueDate: '1403/12/01', amount: 1500000, isPaid: false, paidDate: '', note: 'چک صیادی شماره ۱۲۹۰' },
+          { num: 7, dueDate: '1404/01/01', amount: 1500000, isPaid: false, paidDate: '', note: 'چک صیادی شماره ۱۲۹۱' }
+        ]
+      },
+      {
+        id: 'cust_2',
+        fullName: 'مریم ساداتی',
+        nationalId: '0451239874',
+        birthDate: '1370/11/12',
+        phone: '09356789012',
+        landline: '02122334455',
+        occupation: 'پزشک عمومی',
+        postalCode: '1458963214',
+        address: 'تهران، پاسداران، خیابان بوستان پنجم، برج پارمیس، واحد ۱۲',
+        insuranceType: 'بدنه خودرو',
+        company: 'بیمه سامان',
+        subject: 'هیوندای سانتافه ۲۰۱۷',
+        policyNumber: '1403/240/01923',
+        insurerCode: '85210',
+        startDate: '1403/06/15',
+        endDate: '1404/06/15',
+        totalAmount: 25000000,
+        notes: 'پوشش کامل سرقت درجا، شکست شیشه، بلایای طبیعی و پاشیدن مواد شیمیایی.',
+        attachments: [
+          { slot: 1, title: 'کارت ملی', dataUrl: '' },
+          { slot: 2, title: 'سند مالکیت خودرو', dataUrl: '' },
+          { slot: 3, title: 'گزارش بازدید کارشناس', dataUrl: '' },
+          { slot: 4, title: 'رسید تسویه', dataUrl: '' }
+        ],
+        vouchers: [
+          { id: 'v_4', date: '1403/06/15', amount: 5000000, method: 'کارت به کارت / پوز', desc: 'پیش‌پرداخت صدور' },
+          { id: 'v_5', date: '1403/07/15', amount: 4000000, method: 'واریز به حساب شرکت', desc: 'قسط اول' }
+        ],
+        installments: [
+          { num: 1, dueDate: '1403/06/15', amount: 5000000, isPaid: true, paidDate: '1403/06/15', note: 'پیش‌پرداخت' },
+          { num: 2, dueDate: '1403/07/15', amount: 4000000, isPaid: true, paidDate: '1403/07/15', note: 'واریز نقدی' },
+          { num: 3, dueDate: '1403/08/15', amount: 4000000, isPaid: false, paidDate: '', note: 'سررسید آبان' },
+          { num: 4, dueDate: '1403/09/15', amount: 4000000, isPaid: false, paidDate: '', note: 'سررسید آذر' },
+          { num: 5, dueDate: '1403/10/15', amount: 4000000, isPaid: false, paidDate: '', note: 'سررسید دی' },
+          { num: 6, dueDate: '1403/11/15', amount: 4000000, isPaid: false, paidDate: '', note: 'سررسید بهمن' }
+        ]
+      },
+      {
+        id: 'cust_3',
+        fullName: 'کامران بهرامی',
+        nationalId: '1287456321',
+        birthDate: '1358/02/05',
+        phone: '09131234567',
+        landline: '03136622441',
+        occupation: 'مدیر بازرگانی',
+        postalCode: '8195423698',
+        address: 'اصفهان، خیابان نظر شرقی، مجتمع نگین، واحد ۳',
+        insuranceType: 'آتش‌سوزی و مسئولیت',
+        company: 'بیمه پاسارگاد',
+        subject: 'سوله صنعتی و کارگاه ریخته‌گری به مساحت ۱۲۰۰ متر',
+        policyNumber: '1403/750/04112',
+        insurerCode: '11094',
+        startDate: '1403/01/20',
+        endDate: '1404/01/20',
+        totalAmount: 18000000,
+        notes: 'پوشش انفجار، صاعقه، زلزله و مسئولیت کارفرما در قبال کارکنان (۳۰ نفر).',
+        attachments: [
+          { slot: 1, title: 'شناسنامه و کارت ملی', dataUrl: '' },
+          { slot: 2, title: 'پروانه بهره‌برداری کارگاه', dataUrl: '' },
+          { slot: 3, title: 'فرم پیشنهاد آتش‌سوزی', dataUrl: '' },
+          { slot: 4, title: 'چک‌های تضمین', dataUrl: '' }
+        ],
+        vouchers: [
+          { id: 'v_6', date: '1403/01/20', amount: 6000000, method: 'چک بانکی صیادی', desc: 'چک اول تسویه شد' },
+          { id: 'v_7', date: '1403/05/20', amount: 6000000, method: 'چک بانکی صیادی', desc: 'چک دوم تسویه شد' },
+          { id: 'v_8', date: '1403/09/20', amount: 6000000, method: 'چک بانکی صیادی', desc: 'چک سوم تسویه شد' }
+        ],
+        installments: [
+          { num: 1, dueDate: '1403/01/20', amount: 6000000, isPaid: true, paidDate: '1403/01/20', note: 'قسط اول' },
+          { num: 2, dueDate: '1403/05/20', amount: 6000000, isPaid: true, paidDate: '1403/05/20', note: 'قسط دوم' },
+          { num: 3, dueDate: '1403/09/20', amount: 6000000, isPaid: true, paidDate: '1403/09/20', note: 'قسط سوم - تسویه کامل' }
+        ]
+      },
+      {
+        id: 'cust_4',
+        fullName: 'فاطمه احمدی‌تبار',
+        nationalId: '0039874561',
+        birthDate: '1375/08/14',
+        phone: '09198765432',
+        landline: '02144228899',
+        occupation: 'طراح گرافیک',
+        postalCode: '1468752136',
+        address: 'تهران، صادقیه، فلکه دوم، خیابان اعتمادی، پلاک ۵',
+        insuranceType: 'عمر و سرمایه‌گذاری',
+        company: 'بیمه آسیا',
+        subject: 'بیمه‌نامه عمر ۳۰ ساله با پوشش ازکارافتادگی',
+        policyNumber: '1403/990/07452',
+        insurerCode: '66320',
+        startDate: '1403/08/10',
+        endDate: '1404/08/10',
+        totalAmount: 12000000,
+        notes: 'حق‌بیمه سالانه با ضریب افزایش ۱۰ درصد سالانه و معافیت از پرداخت حق‌بیمه.',
+        attachments: [
+          { slot: 1, title: 'کارت ملی', dataUrl: '' },
+          { slot: 2, title: 'پرسشنامه سلامت پزشکی', dataUrl: '' },
+          { slot: 3, title: 'برگه ذینفعان قرارداد', dataUrl: '' },
+          { slot: 4, title: 'فیش پرداخت سالانه', dataUrl: '' }
+        ],
+        vouchers: [
+          { id: 'v_9', date: '1403/08/10', amount: 12000000, method: 'کارت به کارت / پوز', desc: 'تسویه یکجای سالانه' }
+        ],
+        installments: [
+          { num: 1, dueDate: '1403/08/10', amount: 12000000, isPaid: true, paidDate: '1403/08/10', note: 'پرداخت یکجا سال اول' }
+        ]
+      },
+      {
+        id: 'cust_5',
+        fullName: 'حسین مرادی',
+        nationalId: '0934561234',
+        birthDate: '1361/09/30',
+        phone: '09121112233',
+        landline: '02166554433',
+        occupation: 'پیمانکار ساختمان',
+        postalCode: '1345698712',
+        address: 'تهران، خیابان آزادی، خیابان حبیب‌اللهی، پلاک ۹۴',
+        insuranceType: 'شخص ثالث',
+        company: 'بیمه دانا',
+        subject: 'وانت نیسان زامیاد دیزل - مدل ۱۴۰۰',
+        policyNumber: '1403/102/09931',
+        insurerCode: '32014',
+        startDate: '1402/10/05',
+        endDate: '1403/10/05',
+        totalAmount: 9800000,
+        notes: 'نزدیک به زمان تمدید سالانه (کمتر از ۱۵ روز مانده). ارسال پیامک یادآوری انجام شده.',
+        attachments: [
+          { slot: 1, title: 'کارت ملی', dataUrl: '' },
+          { slot: 2, title: 'سند سبز خودرو', dataUrl: '' },
+          { slot: 3, title: 'بیمه‌نامه قبلی', dataUrl: '' },
+          { slot: 4, title: 'چک صیادی', dataUrl: '' }
+        ],
+        vouchers: [
+          { id: 'v_10', date: '1402/10/05', amount: 4900000, method: 'کارت به کارت / پوز', desc: 'پیش‌پرداخت نیمی از حق‌بیمه' }
+        ],
+        installments: [
+          { num: 1, dueDate: '1402/10/05', amount: 4900000, isPaid: true, paidDate: '1402/10/05', note: 'تسویه شد' },
+          { num: 2, dueDate: '1403/02/05', amount: 4900000, isPaid: false, paidDate: '', note: 'معوقه - نیاز به پیگیری' }
+        ]
+      }
+    ];
+
+    /* ==========================================================================
+       STATE MANAGEMENT
+       ========================================================================== */
+    let customers = [];
+    let selectedCustomerId = null;
+    let selectedRowIndex = 0;
+    let currentUploadSlot = null;
+
+    function initApp() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          customers = JSON.parse(stored);
+        } catch (e) {
+          customers = INITIAL_DEMO_DATA;
+        }
+      } else {
+        customers = INITIAL_DEMO_DATA;
+        saveToStorage();
+      }
+
+      if (customers.length > 0) {
+        selectedCustomerId = customers[0].id;
+        selectedRowIndex = 0;
+      }
+
+      renderTable();
+      updateDashboardStats();
+      setupKeyboardShortcuts();
+    }
+
+    function saveToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
+      updateDashboardStats();
+    }
+
+    function resetDemoData() {
+      if (confirm('آیا از بازنشانی داده‌های نمونه اولیه اطمینان دارید؟ تمام تغییرات به حالت پیش‌فرض بازمی‌گردد.')) {
+        customers = JSON.parse(JSON.stringify(INITIAL_DEMO_DATA));
+        saveToStorage();
+        selectedCustomerId = customers[0]?.id || null;
+        selectedRowIndex = 0;
+        renderTable();
+        showToast('اطلاعات نمونه اولیه با موفقیت بازنشانی شد.', 'success');
+      }
+    }
+
+    /* ==========================================================================
+       DASHBOARD & TABLE RENDERING
+       ========================================================================== */
+    function updateDashboardStats() {
+      document.getElementById('statTotalClients').textContent = formatNumber(customers.length);
+
+      let expiringCount = 0;
+      let totalDebtor = 0;
+      let totalRemaining = 0;
+
+      customers.forEach(c => {
+        totalDebtor += Number(c.totalAmount || 0);
+
+        let paid = 0;
+        if (c.installments && c.installments.length > 0) {
+          paid = c.installments.filter(i => i.isPaid).reduce((sum, i) => sum + Number(i.amount || 0), 0);
+        } else if (c.vouchers) {
+          paid = c.vouchers.reduce((sum, v) => sum + Number(v.amount || 0), 0);
+        }
+        totalRemaining += Math.max(0, Number(c.totalAmount || 0) - paid);
+
+        if (isExpiringSoon(c.endDate)) {
+          expiringCount++;
+        }
+      });
+
+      document.getElementById('statExpiringSoon').textContent = formatNumber(expiringCount);
+      document.getElementById('statTotalDebtor').textContent = formatNumber(totalDebtor) + ' ت';
+      document.getElementById('statTotalRemaining').textContent = formatNumber(totalRemaining) + ' ت';
+    }
+
+    function isExpiringSoon(endDateStr) {
+      if (!endDateStr) return false;
+      return endDateStr.includes('1403/10') || endDateStr.includes('1403/09');
+    }
+
+    function getRenewalBadge(endDateStr) {
+      if (isExpiringSoon(endDateStr)) {
+        return `<span class="badge badge-warning">⏳ نزدیک به انقضا</span>`;
+      }
+      return `<span class="badge badge-success">✓ معتبر و جاری</span>`;
+    }
+
+    function getFilteredCustomers() {
+      const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const type = document.getElementById('filterType').value;
+      const company = document.getElementById('filterCompany').value;
+
+      return customers.filter(c => {
+        const matchesQuery = !q ||
+          (c.fullName && c.fullName.toLowerCase().includes(q)) ||
+          (c.nationalId && c.nationalId.includes(q)) ||
+          (c.policyNumber && c.policyNumber.toLowerCase().includes(q)) ||
+          (c.insuranceType && c.insuranceType.toLowerCase().includes(q)) ||
+          (c.subject && c.subject.toLowerCase().includes(q));
+
+        const matchesType = !type || (c.insuranceType === type);
+        const matchesCompany = !company || (c.company === company);
+
+        return matchesQuery && matchesType && matchesCompany;
+      });
+    }
+
+    function handleSearch() {
+      renderTable();
+    }
+
+    function renderTable() {
+      const filtered = getFilteredCustomers();
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              هیچ پرونده‌ای منطبق با جستجوی شما یافت نشد.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach((cust, index) => {
+        const isSelected = cust.id === selectedCustomerId;
+
+        const instList = cust.installments || [];
+        const paidCount = instList.filter(i => i.isPaid).length;
+        const totalInst = instList.length;
+        const paidAmount = instList.filter(i => i.isPaid).reduce((s, i) => s + Number(i.amount || 0), 0);
+        const balance = Math.max(0, Number(cust.totalAmount || 0) - paidAmount);
+
+        const tr = document.createElement('tr');
+        if (isSelected) tr.classList.add('selected-row');
+
+        tr.onclick = () => selectCustomerRow(cust.id, index);
+
+        tr.innerHTML = `
+          <td style="text-align: center; font-weight: 700; color: var(--text-muted);">${index + 1}</td>
+          <td>
+            <div class="client-cell">
+              <span class="client-name">${escapeHtml(cust.fullName)}</span>
+              <span class="client-meta">کد ملی: ${cust.nationalId} | همراه: ${cust.phone}</span>
+            </div>
+          </td>
+          <td><span class="badge badge-primary">${escapeHtml(cust.insuranceType)}</span></td>
+          <td style="font-weight: 500;">${escapeHtml(cust.subject || '-')}</td>
+          <td><span class="badge badge-gray">${escapeHtml(cust.company)}</span></td>
+          <td>
+            <div style="font-size: 0.8rem;">
+              <div>از: <strong>${cust.startDate || '-'}</strong></div>
+              <div>تا: <strong>${cust.endDate || '-'}</strong></div>
+            </div>
+          </td>
+          <td>${getRenewalBadge(cust.endDate)}</td>
+          <td>
+            <div style="font-size: 0.82rem;">
+              <span style="font-weight: 700; color: ${balance === 0 ? 'var(--success)' : 'var(--danger)'};">
+                ${totalInst > 0 ? `${paidCount} از ${totalInst} قسط پرداخت شده` : (balance === 0 ? 'تسویه کامل' : 'در انتظار پرداخت')}
+              </span>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">
+                مانده بدهی: ${formatNumber(balance)} تومان
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="action-group" style="justify-content: center;">
+              <button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); openCustomerDetails('${cust.id}')" title="مشاهده مشخصات کامل [کلید 2]">
+                <span class="key" style="font-size: 0.7rem; padding: 1px 5px;">2</span> جزئیات
+              </button>
+              <button class="btn btn-outline btn-sm" style="color: #047857; border-color: #a7f3d0;" onclick="event.stopPropagation(); openAccountingModal('${cust.id}')" title="امور مالی و مدارک [کلید 6]">
+                <span class="key" style="font-size: 0.7rem; padding: 1px 5px;">6</span> مالی و مدارک
+              </button>
+              <button class="btn btn-outline btn-sm" style="color: #1d4ed8; border-color: #bfdbfe;" onclick="event.stopPropagation(); openInstallmentsModal('${cust.id}')" title="مدیریت اقساط [کلید 7]">
+                <span class="key" style="font-size: 0.7rem; padding: 1px 5px;">7</span> اقساط
+              </button>
+              <button class="btn btn-danger-outline btn-sm" onclick="event.stopPropagation(); deleteCustomer('${cust.id}')" title="حذف پرونده">
+                🗑️
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      const selectedIndexInFiltered = filtered.findIndex(c => c.id === selectedCustomerId);
+      if (selectedIndexInFiltered !== -1) {
+        document.getElementById('activeRowIndicator').textContent = `سطر انتخابی: ${selectedIndexInFiltered + 1} (${filtered[selectedIndexInFiltered].fullName})`;
+      }
+    }
+
+    function selectCustomerRow(id, index) {
+      selectedCustomerId = id;
+      selectedRowIndex = index;
+      renderTable();
+    }
+
+    /* ==========================================================================
+       KEYBOARD SHORTCUTS HANDLER
+       ========================================================================== */
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+          if (e.key === 'Escape') {
+            closeAllModals();
+          }
+          return;
+        }
+
+        const filtered = getFilteredCustomers();
+        if (filtered.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          let nextIndex = selectedRowIndex + 1;
+          if (nextIndex >= filtered.length) nextIndex = 0;
+          selectCustomerRow(filtered[nextIndex].id, nextIndex);
+          scrollRowIntoView(nextIndex);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          let prevIndex = selectedRowIndex - 1;
+          if (prevIndex < 0) prevIndex = filtered.length - 1;
+          selectCustomerRow(filtered[prevIndex].id, prevIndex);
+          scrollRowIntoView(prevIndex);
+        } else if (e.key === '2') {
+          e.preventDefault();
+          if (selectedCustomerId) openCustomerDetails(selectedCustomerId);
+        } else if (e.key === '6') {
+          e.preventDefault();
+          if (selectedCustomerId) openAccountingModal(selectedCustomerId);
+        } else if (e.key === '7') {
+          e.preventDefault();
+          if (selectedCustomerId) openInstallmentsModal(selectedCustomerId);
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeAllModals();
+        }
+      });
+    }
+
+    function scrollRowIntoView(index) {
+      const rows = document.querySelectorAll('#tableBody tr');
+      if (rows[index]) {
+        rows[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    /* ==========================================================================
+       MODAL 2: CUSTOMER DETAILS VIEW
+       ========================================================================== */
+    function openCustomerDetails(id) {
+      selectedCustomerId = id;
+      const cust = customers.find(c => c.id === id);
+      if (!cust) return;
+
+      const body = document.getElementById('modalDetailsBody');
+
+      const installments = cust.installments || [];
+      const paidInst = installments.filter(i => i.isPaid);
+      const paidSum = paidInst.reduce((s, i) => s + Number(i.amount || 0), 0);
+      const balance = Math.max(0, Number(cust.totalAmount || 0) - paidSum);
+
+      body.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">${escapeHtml(cust.fullName)}</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">شماره بیمه‌نامه: ${escapeHtml(cust.policyNumber)} | کد بیمه‌گذار: ${escapeHtml(cust.insurerCode || '-')}</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-outline btn-sm" onclick="editCustomer('${cust.id}')">✏️ ویرایش اطلاعات</button>
+            <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ چاپ پرونده</button>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.92rem; font-weight: 800; color: var(--primary); margin-bottom: 12px;">👤 مشخصات هویتی و فردی</h4>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-label">نام و نام خانوادگی</div><div class="info-card-val">${escapeHtml(cust.fullName)}</div></div>
+          <div class="info-card"><div class="info-card-label">کد ملی</div><div class="info-card-val">${escapeHtml(cust.nationalId)}</div></div>
+          <div class="info-card"><div class="info-card-label">تاریخ تولد</div><div class="info-card-val">${escapeHtml(cust.birthDate || '-')}</div></div>
+          <div class="info-card"><div class="info-card-label">شماره همراه</div><div class="info-card-val">${escapeHtml(cust.phone)}</div></div>
+          <div class="info-card"><div class="info-card-label">تلفن ثابت</div><div class="info-card-val">${escapeHtml(cust.landline || '-')}</div></div>
+          <div class="info-card"><div class="info-card-label">شغل / حرفه</div><div class="info-card-val">${escapeHtml(cust.occupation || '-')}</div></div>
+          <div class="info-card"><div class="info-card-label">کد پستی</div><div class="info-card-val">${escapeHtml(cust.postalCode || '-')}</div></div>
+          <div class="info-card" style="grid-column: span 2;"><div class="info-card-label">آدرس کامل</div><div class="info-card-val">${escapeHtml(cust.address || '-')}</div></div>
+        </div>
+
+        <h4 style="font-size: 0.92rem; font-weight: 800; color: var(--primary); margin: 20px 0 12px;">📄 اطلاعات بیمه‌نامه و تعهدات</h4>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-label">نوع بیمه</div><div class="info-card-val">${escapeHtml(cust.insuranceType)}</div></div>
+          <div class="info-card"><div class="info-card-label">شرکت بیمه‌گر</div><div class="info-card-val">${escapeHtml(cust.company)}</div></div>
+          <div class="info-card"><div class="info-card-label">مورد بیمه</div><div class="info-card-val">${escapeHtml(cust.subject || '-')}</div></div>
+          <div class="info-card"><div class="info-card-label">تاریخ شروع</div><div class="info-card-val">${escapeHtml(cust.startDate || '-')}</div></div>
+          <div class="info-card"><div class="info-card-label">تاریخ پایان (انقضا)</div><div class="info-card-val">${escapeHtml(cust.endDate || '-')}</div></div>
+          <div class="info-card"><div class="info-card-label">کل حق‌بیمه</div><div class="info-card-val" style="color: var(--primary);">${formatNumber(cust.totalAmount)} تومان</div></div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 14px;">
+          <div class="info-card-label" style="font-weight: 700; margin-bottom: 4px;">توضیحات کلی و ملاحظات:</div>
+          <div style="font-size: 0.88rem; color: var(--text-main);">${escapeHtml(cust.notes || 'توضیحاتی ثبت نشده است.')}</div>
+        </div>
+
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.82rem; font-weight: 700; color: #1e40af;">وضعیت اقساط و تسویه:</div>
+            <div style="font-size: 0.9rem; font-weight: 800; color: var(--text-main); margin-top: 2px;">
+              ${paidInst.length} قسط پرداخت شده از مجموع ${installments.length} قسط (${formatNumber(paidSum)} تومان وصول شده)
+            </div>
+          </div>
+          <div style="text-align: left;">
+            <div style="font-size: 0.8rem; color: var(--text-muted);">مانده بدهی:</div>
+            <div style="font-size: 1.1rem; font-weight: 800; color: ${balance === 0 ? 'var(--success)' : 'var(--danger)'};">
+              ${formatNumber(balance)} تومان
+            </div>
+          </div>
+        </div>
+      `;
+
+      openModal('modalDetails');
+    }
+
+    /* ==========================================================================
+       MODAL 6: ACCOUNTING & ATTACHMENTS VIEW
+       ========================================================================== */
+    function openAccountingModal(id) {
+      selectedCustomerId = id;
+      const cust = customers.find(c => c.id === id);
+      if (!cust) return;
+
+      document.getElementById('accClientName').textContent = cust.fullName;
+      document.getElementById('accPolicyNumber').textContent = `شماره بیمه‌نامه: ${cust.policyNumber} | شرکت: ${cust.company}`;
+
+      renderAccountingData(cust);
+      openModal('modalAccounting');
+    }
+
+    function renderAccountingData(cust) {
+      const debtor = Number(cust.totalAmount || 0);
+
+      const vouchers = cust.vouchers || [];
+      const creditor = vouchers.reduce((sum, v) => sum + Number(v.amount || 0), 0);
+      const balance = debtor - creditor;
+
+      document.getElementById('accDebtorAmount').textContent = formatNumber(debtor) + ' تومان';
+      document.getElementById('accCreditorAmount').textContent = formatNumber(creditor) + ' تومان';
+      document.getElementById('accBalanceAmount').textContent = formatNumber(balance) + ' تومان';
+
+      const badge = document.getElementById('accBalanceStatusBadge');
+      if (balance <= 0) {
+        badge.className = 'badge badge-success';
+        badge.textContent = 'تسویه کامل (فاقد بدهی)';
+      } else {
+        badge.className = 'badge badge-danger';
+        badge.textContent = `مانده بدهی: ${formatNumber(balance)} تومان`;
+      }
+
+      document.getElementById('voucherDate').value = getTodayPersianDate();
+
+      const tbody = document.getElementById('vouchersTableBody');
+      tbody.innerHTML = '';
+
+      if (vouchers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 14px;">هیچ سند پرداختی تاکنون ثبت نشده است.</td></tr>`;
+      } else {
+        vouchers.forEach((v, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="text-align: center;">${idx + 1}</td>
+            <td><strong>${v.date}</strong></td>
+            <td style="font-weight: 700; color: #047857;">${formatNumber(v.amount)}</td>
+            <td><span class="badge badge-gray">${v.method}</span></td>
+            <td>${escapeHtml(v.desc || '-')}</td>
+            <td style="text-align: center;">
+              <button class="btn btn-danger-outline btn-sm" onclick="deletePaymentVoucher('${v.id}')" title="حذف سند">🗑️</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      renderAttachmentsGrid(cust);
+    }
+
+    function addPaymentVoucher() {
+      const cust = customers.find(c => c.id === selectedCustomerId);
+      if (!cust) return;
+
+      const amount = Number(document.getElementById('voucherAmount').value);
+      const date = document.getElementById('voucherDate').value.trim();
+      const method = document.getElementById('voucherMethod').value;
+      const desc = document.getElementById('voucherDesc').value.trim();
+
+      if (!amount || amount <= 0) {
+        showToast('لطفاً مبلغ واریزی معتبری وارد نمایید.', 'error');
+        return;
+      }
+      if (!date) {
+        showToast('لطفاً تاریخ پرداخت را وارد کنید.', 'error');
+        return;
+      }
+
+      if (!cust.vouchers) cust.vouchers = [];
+
+      const newVoucher = {
+        id: 'v_' + Date.now(),
+        date: date,
+        amount: amount,
+        method: method,
+        desc: desc || 'سند پرداخت ثبت شده'
+      };
+
+      cust.vouchers.push(newVoucher);
+
+      if (cust.installments) {
+        for (let inst of cust.installments) {
+          if (!inst.isPaid) {
+            inst.isPaid = true;
+            inst.paidDate = date;
+            break;
+          }
+        }
+      }
+
+      saveToStorage();
+      renderAccountingData(cust);
+      renderTable();
+
+      document.getElementById('voucherAmount').value = '';
+      document.getElementById('voucherDesc').value = '';
+
+      showToast('سند پرداخت با موفقیت ثبت شد و مانده حساب باز‌محاسبه گردید.', 'success');
+    }
+
+    function deletePaymentVoucher(voucherId) {
+      const cust = customers.find(c => c.id === selectedCustomerId);
+      if (!cust || !cust.vouchers) return;
+
+      if (confirm('آیا از حذف این سند پرداخت مطمئن هستید؟')) {
+        cust.vouchers = cust.vouchers.filter(v => v.id !== voucherId);
+        saveToStorage();
+        renderAccountingData(cust);
+        renderTable();
+        showToast('سند پرداخت حذف گردید.', 'success');
+      }
+    }
+
+    const DEFAULT_SLOT_NAMES = [
+      'کارت ملی / شناسنامه',
+      'سند / مدرک مورد بیمه',
+      'فرم پیشنهاد و پرسشنامه',
+      'فیش واریزی / الحاقیه'
+    ];
+
+    function renderAttachmentsGrid(cust) {
+      const grid = document.getElementById('attachmentsGrid');
+      grid.innerHTML = '';
+
+      if (!cust.attachments || cust.attachments.length !== 4) {
+        cust.attachments = [
+          { slot: 1, title: DEFAULT_SLOT_NAMES[0], dataUrl: '' },
+          { slot: 2, title: DEFAULT_SLOT_NAMES[1], dataUrl: '' },
+          { slot: 3, title: DEFAULT_SLOT_NAMES[2], dataUrl: '' },
+          { slot: 4, title: DEFAULT_SLOT_NAMES[3], dataUrl: '' }
+        ];
+      }
+
+      cust.attachments.forEach((att, idx) => {
+        const slotDiv = document.createElement('div');
+        slotDiv.className = 'attachment-card';
+
+        if (att.dataUrl) {
+          slotDiv.innerHTML = `
+            <img src="${att.dataUrl}" alt="${att.title}">
+            <div class="attachment-overlay">
+              <button class="btn btn-outline btn-sm" style="color: white; border-color: white;" onclick="event.stopPropagation(); viewAttachmentImage('${att.dataUrl}')">👁️ بزرگنمایی</button>
+              <button class="btn btn-danger-outline btn-sm" style="color: #fca5a5; border-color: #fca5a5;" onclick="event.stopPropagation(); removeAttachment(${idx})">🗑️ حذف</button>
+            </div>
+            <div class="attachment-badge-label">${att.title}</div>
+          `;
+        } else {
+          slotDiv.innerHTML = `
+            <div style="font-size: 28px; color: #94a3b8; margin-bottom: 4px;">📷</div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-align: center; padding: 0 8px;">
+              بارگذاری ${att.title}
+            </div>
+            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 4px;">(کلیک کنید)</div>
+            <div class="attachment-badge-label">اسلات ${idx + 1}</div>
+          `;
+          slotDiv.onclick = () => triggerUploadForSlot(idx);
+        }
+
+        grid.appendChild(slotDiv);
+      });
+    }
+
+    function triggerUploadForSlot(slotIndex) {
+      currentUploadSlot = slotIndex;
+      document.getElementById('attachmentFileInput').value = '';
+      document.getElementById('attachmentFileInput').click();
+    }
+
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('لطفاً یک فایل تصویری معتبر انتخاب فرمایید.', 'error');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 900;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+          const cust = customers.find(c => c.id === selectedCustomerId);
+          if (cust && currentUploadSlot !== null) {
+            cust.attachments[currentUploadSlot].dataUrl = compressedDataUrl;
+            saveToStorage();
+            renderAttachmentsGrid(cust);
+            showToast(`تصویر ${cust.attachments[currentUploadSlot].title} با موفقیت بارگذاری و ذخیره شد.`, 'success');
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeAttachment(slotIndex) {
+      const cust = customers.find(c => c.id === selectedCustomerId);
+      if (cust && cust.attachments[slotIndex]) {
+        if (confirm(`آیا از حذف تصویر ${cust.attachments[slotIndex].title} اطمینان دارید؟`)) {
+          cust.attachments[slotIndex].dataUrl = '';
+          saveToStorage();
+          renderAttachmentsGrid(cust);
+          showToast('تصویر پیوست حذف شد.', 'success');
+        }
+      }
+    }
+
+    function viewAttachmentImage(url) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightboxModal').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('active');
+    }
+
+    /* ==========================================================================
+       MODAL 7: INSTALLMENTS TRACKER VIEW
+       ========================================================================== */
+    function openInstallmentsModal(id) {
+      selectedCustomerId = id;
+      const cust = customers.find(c => c.id === id);
+      if (!cust) return;
+
+      document.getElementById('instClientName').textContent = cust.fullName;
+      document.getElementById('instPolicyNumber').textContent = `شماره بیمه‌نامه: ${cust.policyNumber} | مبلغ کل: ${formatNumber(cust.totalAmount)} تومان`;
+
+      if (!cust.installments || cust.installments.length === 0) {
+        generateInstallmentPlan(7, false);
+      }
+
+      renderInstallmentsView(cust);
+      openModal('modalInstallments');
+    }
+
+    function renderInstallmentsView(cust) {
+      const installments = cust.installments || [];
+      const totalAmount = Number(cust.totalAmount || 0);
+
+      const paidInst = installments.filter(i => i.isPaid);
+      const paidSum = paidInst.reduce((s, i) => s + Number(i.amount || 0), 0);
+      const remaining = Math.max(0, totalAmount - paidSum);
+      const progressPercent = totalAmount > 0 ? Math.min(100, Math.round((paidSum / totalAmount) * 100)) : 0;
+
+      document.getElementById('instProgressSummary').textContent = `${paidInst.length} از ${installments.length} قسط پرداخت شده (${progressPercent}٪)`;
+      document.getElementById('instRemainingText').textContent = `مانده بدهی: ${formatNumber(remaining)} تومان | وصولی: ${formatNumber(paidSum)} تومان`;
+      document.getElementById('instProgressBar').style.width = `${progressPercent}%`;
+
+      const tbody = document.getElementById('installmentsTableBody');
+      tbody.innerHTML = '';
+
+      installments.forEach((inst, index) => {
+        const tr = document.createElement('tr');
+        if (inst.isPaid) tr.style.background = '#f0fdf4';
+
+        tr.innerHTML = `
+          <td style="text-align: center;">
+            <input type="checkbox" class="custom-checkbox" ${inst.isPaid ? 'checked' : ''} onchange="toggleInstallmentPaid(${index}, this.checked)">
+          </td>
+          <td style="font-weight: 700;">قسط شماره ${inst.num || index + 1}</td>
+          <td><input type="text" value="${inst.dueDate || ''}" class="form-control" style="padding: 4px 8px; font-size: 0.8rem; width: 110px;" onchange="updateInstallmentField(${index}, 'dueDate', this.value)"></td>
+          <td style="font-weight: 800; color: #1e3a8a;">
+            <input type="number" value="${inst.amount}" class="form-control" style="padding: 4px 8px; font-size: 0.85rem; width: 130px;" onchange="updateInstallmentField(${index}, 'amount', Number(this.value))">
+          </td>
+          <td>
+            ${inst.isPaid ? '<span class="badge badge-success">✓ تسویه شده</span>' : '<span class="badge badge-warning">در انتظار پرداخت</span>'}
+          </td>
+          <td>
+            <input type="text" value="${inst.isPaid ? (inst.paidDate || 'پرداخت شده') : (inst.note || '')}" placeholder="تاریخ یا شماره پیگیری" class="form-control" style="padding: 4px 8px; font-size: 0.8rem;" onchange="updateInstallmentField(${index}, '${inst.isPaid ? 'paidDate' : 'note'}', this.value)">
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleInstallmentPaid(index, isChecked) {
+      const cust = customers.find(c => c.id === selectedCustomerId);
+      if (!cust || !cust.installments[index]) return;
+
+      cust.installments[index].isPaid = isChecked;
+      if (isChecked) {
+        cust.installments[index].paidDate = getTodayPersianDate();
+      } else {
+        cust.installments[index].paidDate = '';
+      }
+
+      saveToStorage();
+      renderInstallmentsView(cust);
+      renderTable();
+    }
+
+    function updateInstallmentField(index, field, value) {
+      const cust = customers.find(c => c.id === selectedCustomerId);
+      if (!cust || !cust.installments[index]) return;
+
+      cust.installments[index][field] = value;
+      saveToStorage();
+      renderInstallmentsView(cust);
+      renderTable();
+    }
+
+    function generateInstallmentPlan(count, promptConfirm = true) {
+      const cust = customers.find(c => c.id === selectedCustomerId);
+      if (!cust) return;
+
+      if (promptConfirm && cust.installments && cust.installments.length > 0) {
+        if (!confirm(`آیا مطمئن هستید که می‌خواهید اقساط این مشتری را به طرح ${count} قسطه تبدیل کنید؟ جدول قبلی بازسازی خواهد شد.`)) {
+          return;
+        }
+      }
+
+      const total = Number(cust.totalAmount || 0);
+      const perInst = Math.round(total / count);
+
+      const newInstallments = [];
+      const baseDate = cust.startDate || '1403/07/01';
+
+      for (let i = 1; i <= count; i++) {
+        newInstallments.push({
+          num: i,
+          dueDate: addPersianMonths(baseDate, i - 1),
+          amount: i === count ? (total - (perInst * (count - 1))) : perInst,
+          isPaid: false,
+          paidDate: '',
+          note: i === 1 ? 'پیش‌پرداخت اولیه' : `قسط شماره ${i}`
+        });
+      }
+
+      cust.installments = newInstallments;
+      saveToStorage();
+      renderInstallmentsView(cust);
+      renderTable();
+      showToast(`طرح ${count} قسطه با موفقیت تولید شد.`, 'success');
+    }
+
+    function promptCustomInstallmentPlan() {
+      const input = prompt('لطفاً تعداد اقساط مورد نظر را وارد نمایید (بین ۲ تا ۲۴ قسط):', '4');
+      if (input) {
+        const count = parseInt(input, 10);
+        if (count >= 2 && count <= 24) {
+          generateInstallmentPlan(count, true);
+        } else {
+          alert('تعداد اقساط باید بین ۲ تا ۲۴ باشد.');
+        }
+      }
+    }
+
+    function saveInstallmentsAndClose() {
+      saveToStorage();
+      closeModal('modalInstallments');
+      renderTable();
+      showToast('اطلاعات اقساط با موفقیت ذخیره گردید.', 'success');
+    }
+
+    /* ==========================================================================
+       CUSTOMER CREATE & EDIT FORM
+       ========================================================================== */
+    function openNewCustomerModal() {
+      document.getElementById('customerFormTitle').textContent = 'ثبت پرونده بیمه‌گذار جدید';
+      document.getElementById('custFormId').value = '';
+      document.getElementById('customerForm').reset();
+      document.getElementById('custStartDate').value = getTodayPersianDate();
+      document.getElementById('custEndDate').value = addPersianMonths(getTodayPersianDate(), 12);
+      openModal('modalCustomerForm');
+    }
+
+    function editCustomer(id) {
+      const cust = customers.find(c => c.id === id);
+      if (!cust) return;
+
+      closeModal('modalDetails');
+      document.getElementById('customerFormTitle').textContent = 'ویرایش اطلاعات بیمه‌گذار';
+      document.getElementById('custFormId').value = cust.id;
+      document.getElementById('custFullName').value = cust.fullName || '';
+      document.getElementById('custNationalId').value = cust.nationalId || '';
+      document.getElementById('custBirthDate').value = cust.birthDate || '';
+      document.getElementById('custPhone').value = cust.phone || '';
+      document.getElementById('custLandline').value = cust.landline || '';
+      document.getElementById('custOccupation').value = cust.occupation || '';
+      document.getElementById('custInsuranceType').value = cust.insuranceType || 'شخص ثالث';
+      document.getElementById('custCompany').value = cust.company || 'بیمه ایران';
+      document.getElementById('custSubject').value = cust.subject || '';
+      document.getElementById('custPolicyNumber').value = cust.policyNumber || '';
+      document.getElementById('custInsurerCode').value = cust.insurerCode || '';
+      document.getElementById('custTotalAmount').value = cust.totalAmount || '';
+      document.getElementById('custStartDate').value = cust.startDate || '';
+      document.getElementById('custEndDate').value = cust.endDate || '';
+      document.getElementById('custPostalCode').value = cust.postalCode || '';
+      document.getElementById('custAddress').value = cust.address || '';
+      document.getElementById('custNotes').value = cust.notes || '';
+
+      openModal('modalCustomerForm');
+    }
+
+    function handleCustomerFormSubmit(e) {
+      e.preventDefault();
+
+      const existingId = document.getElementById('custFormId').value;
+      const fullName = document.getElementById('custFullName').value.trim();
+      const nationalId = document.getElementById('custNationalId').value.trim();
+      const birthDate = document.getElementById('custBirthDate').value.trim();
+      const phone = document.getElementById('custPhone').value.trim();
+      const landline = document.getElementById('custLandline').value.trim();
+      const occupation = document.getElementById('custOccupation').value.trim();
+      const insuranceType = document.getElementById('custInsuranceType').value;
+      const company = document.getElementById('custCompany').value;
+      const subject = document.getElementById('custSubject').value.trim();
+      const policyNumber = document.getElementById('custPolicyNumber').value.trim();
+      const insurerCode = document.getElementById('custInsurerCode').value.trim();
+      const totalAmount = Number(document.getElementById('custTotalAmount').value);
+      const startDate = document.getElementById('custStartDate').value.trim();
+      const endDate = document.getElementById('custEndDate').value.trim();
+      const instCount = parseInt(document.getElementById('custInstallmentsCount').value, 10) || 7;
+      const postalCode = document.getElementById('custPostalCode').value.trim();
+      const address = document.getElementById('custAddress').value.trim();
+      const notes = document.getElementById('custNotes').value.trim();
+
+      if (existingId) {
+        const cust = customers.find(c => c.id === existingId);
+        if (cust) {
+          cust.fullName = fullName;
+          cust.nationalId = nationalId;
+          cust.birthDate = birthDate;
+          cust.phone = phone;
+          cust.landline = landline;
+          cust.occupation = occupation;
+          cust.insuranceType = insuranceType;
+          cust.company = company;
+          cust.subject = subject;
+          cust.policyNumber = policyNumber;
+          cust.insurerCode = insurerCode;
+          cust.totalAmount = totalAmount;
+          cust.startDate = startDate;
+          cust.endDate = endDate;
+          cust.postalCode = postalCode;
+          cust.address = address;
+          cust.notes = notes;
+        }
+        showToast('اطلاعات بیمه‌گذار با موفقیت به‌روزرسانی شد.', 'success');
+      } else {
+        const newId = 'cust_' + Date.now();
+        const perInst = Math.round(totalAmount / instCount);
+        const generatedInst = [];
+
+        for (let i = 1; i <= instCount; i++) {
+          generatedInst.push({
+            num: i,
+            dueDate: addPersianMonths(startDate, i - 1),
+            amount: i === instCount ? (totalAmount - (perInst * (instCount - 1))) : perInst,
+            isPaid: false,
+            paidDate: '',
+            note: `قسط شماره ${i}`
+          });
+        }
+
+        const newCust = {
+          id: newId,
+          fullName,
+          nationalId,
+          birthDate,
+          phone,
+          landline,
+          occupation,
+          postalCode,
+          address,
+          insuranceType,
+          company,
+          subject,
+          policyNumber,
+          insurerCode,
+          startDate,
+          endDate,
+          totalAmount,
+          notes,
+          attachments: [
+            { slot: 1, title: DEFAULT_SLOT_NAMES[0], dataUrl: '' },
+            { slot: 2, title: DEFAULT_SLOT_NAMES[1], dataUrl: '' },
+            { slot: 3, title: DEFAULT_SLOT_NAMES[2], dataUrl: '' },
+            { slot: 4, title: DEFAULT_SLOT_NAMES[3], dataUrl: '' }
+          ],
+          vouchers: [],
+          installments: generatedInst
+        };
+
+        customers.unshift(newCust);
+        selectedCustomerId = newId;
+        selectedRowIndex = 0;
+        showToast('پرونده بیمه‌گذار جدید با موفقیت ایجاد شد.', 'success');
+      }
+
+      saveToStorage();
+      closeModal('modalCustomerForm');
+      renderTable();
+    }
+
+    function deleteCustomer(id) {
+      const cust = customers.find(c => c.id === id);
+      if (!cust) return;
+
+      if (confirm(`آیا از حذف کامل پرونده «${cust.fullName}» اطمینان دارید؟`)) {
+        customers = customers.filter(c => c.id !== id);
+        if (selectedCustomerId === id) {
+          selectedCustomerId = customers[0]?.id || null;
+          selectedRowIndex = 0;
+        }
+        saveToStorage();
+        renderTable();
+        showToast('پرونده با موفقیت حذف گردید.', 'success');
+      }
+    }
+
+    /* ==========================================================================
+       MODAL CONTROLLER UTILITIES
+       ========================================================================== */
+    function openModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) el.classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      const el = document.getElementById(modalId);
+      if (el) el.classList.remove('active');
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('active'));
+      closeLightbox();
+    }
+
+    function switchModal(fromId, toId) {
+      closeModal(fromId);
+      if (toId === 'modalAccounting') {
+        openAccountingModal(selectedCustomerId);
+      } else if (toId === 'modalInstallments') {
+        openInstallmentsModal(selectedCustomerId);
+      } else if (toId === 'modalDetails') {
+        openCustomerDetails(selectedCustomerId);
+      }
+    }
+
+    /* ==========================================================================
+       HELPERS & UTILITIES
+       ========================================================================== */
+    function formatNumber(num) {
+      if (num === null || num === undefined || isNaN(num)) return '۰';
+      return Number(num).toLocaleString('fa-IR');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function getTodayPersianDate() {
+      return '۱۴۰۳/۰۷/۱۵';
+    }
+
+    function addPersianMonths(dateStr, monthsToAdd) {
+      if (!dateStr || !dateStr.includes('/')) return '۱۴۰۳/۰۷/۱۵';
+      const parts = dateStr.split('/');
+      let year = parseInt(parts[0], 10) || 1403;
+      let month = parseInt(parts[1], 10) || 1;
+      let day = parts[2] || '۰۱';
+
+      month += monthsToAdd;
+      while (month > 12) {
+        month -= 12;
+        year += 1;
+      }
+
+      const mStr = month < 10 ? '0' + month : '' + month;
+      return `${year}/${mStr}/${day}`;
+    }
+
+    function showToast(msg, type = 'info') {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toastMsg');
+      const iconEl = document.getElementById('toastIcon');
+
+      msgEl.textContent = msg;
+      iconEl.textContent = type === 'error' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️');
+
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
